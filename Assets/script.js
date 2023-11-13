@@ -1,3 +1,13 @@
+function resetQuiz(){
+document.getElementById("high-score-list").style.display = "none";
+    clearInterval(timerInterval);
+    currentQuestion = 0;
+    score = 0;
+    timeLeft = 60;
+    document.getElementById("score-value").innerHTML = score;
+startQuiz();
+}
+
 const questions = [
     {question: "What is the DOM?", options: ["Double Object Modulus", "Document Object Model", "Delirious Orange Man", "Documents Objectifying Men"], correct:1},
     {question: "Which of these defines a variable?", options:["veryable","var","var, matey","variable"], correct:1},
@@ -79,8 +89,59 @@ function endQuiz() {
     document.getElementById("question").textContent = "Quiz Over!";
     document.getElementById("options").innerHTML = "";
     document.getElementById("score").textContent = "Final Score: " + score;
+    document.getElementById("high-scores").style.display = "block";
+    document.getElementById("high-score-initials").addEventListener("submit", function(event){
+        event.preventDefault();
+    
+    const initials = document.getElementById("initials").value;
+    const userScore = {initials: initials, score: score};
+    const existingScores = JSON.parse(localStorage.getItem("highScores")) || [];
+    existingScores.push(userScore);
+        console.log(userScore);
+    localStorage.setItem("highScores", JSON.stringify(existingScores));
+        console.log(existingScores);
+    displayScores();
+    });
+   
+}
 
     // need to add code to capture initials and write initials + score to local memory 
     //add view high scores link
     //add go back button & clear scores buttons
+
+
+
+//div element form in html that's hidden
+//get score unhides the div and accepts user input
+//
+function displayScores(){
+document.getElementById("high-score-initials").style.display = "none";
+// console.log("DISPLAYSCORES");
+const score1 = document.getElementById("score-1");
+const score2 = document.getElementById("score-2");
+const score3 = document.getElementById("score-3");
+const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
+console.log(highScores);
+highScores.sort((a, b) => b.score - a.score);
+const topThreeScores = highScores.slice(0,3);
+
+for (let i=0; i < topThreeScores.length; i++){
+const listItem = document.getElementById(`score-${i + 1}`);
+console.log(listItem);
+listItem.textContent = `${i+1}: ${topThreeScores[i].initials} - ${topThreeScores[i].score}`;
+}
+console.log(topThreeScores);
+document.getElementById("high-score-list").style.display = "block";
+
+playAgain();
+
+}
+
+function playAgain(){
+const playAgainButton = document.getElementById("play-again");
+playAgainButton.addEventListener("click", function(event){
+    event.preventDefault();
+    // resetQuiz();
+   location.reload(); 
+});
 }
