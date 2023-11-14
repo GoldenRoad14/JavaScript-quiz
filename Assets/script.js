@@ -1,3 +1,4 @@
+// Function to clear values and restart quiz
 function resetQuiz(){
 document.getElementById("high-score-list").style.display = "none";
     clearInterval(timerInterval);
@@ -7,7 +8,7 @@ document.getElementById("high-score-list").style.display = "none";
     document.getElementById("score-value").innerHTML = score;
 startQuiz();
 }
-
+// define questions for quiz
 const questions = [
     {question: "What is the DOM?", options: ["Double Object Modulus", "Document Object Model", "Delirious Orange Man", "Documents Objectifying Men"], correct:1},
     {question: "Which of these defines a variable?", options:["veryable","var","var, matey","variable"], correct:1},
@@ -21,12 +22,9 @@ let currentQuestion = 0;
 let score = 0;
 let timeLeft = 60;
 let timerInterval;
-
+// get start button from HTML and begin quiz
 const startBtn = document.getElementById("start-btn");
-
 startBtn.addEventListener("click", startQuiz) 
-    console.log("init!");
-    
 
 function startQuiz(){
     console.log("Quiz initialized!");
@@ -35,32 +33,31 @@ function startQuiz(){
     startTimer();
 }
 
+// this function loads the questions from the questions array
 function loadQuestion(){
     questionEl = document.getElementById("question");
     optionsEl = document.getElementById("options");
 
     questionEl.textContent = questions[currentQuestion].question;
-    console.log(questionEl.textContent);
 
-    optionsEl.innerHTML = "";
+    optionsEl.innerHTML = ""; //clears the options for the next question
     for(let i = 0; i < questions[currentQuestion].options.length; i++){
         const options = questions[currentQuestion].options[i];
         const optionButton = document.createElement("button");
+        optionButton.classList.add("quiz-option");
         optionButton.textContent = options;
         optionButton.onclick = function(){
-            checkAnswer(i);
+            checkAnswer(i); //calls checkAnswer function
         }
-        optionsEl.appendChild(optionButton);
+        optionsEl.appendChild(optionButton); //adds option buttons to HTML for each question
     }
 }
-
+// function that checks the answer
 function checkAnswer(i){
     if(i === questions[currentQuestion].correct){
         score++;
         document.getElementById("score-value").innerHTML = score;
-        console.log("correct!");
     } else {
-        console.log("wrong answer");
         timeLeft = Math.max(0, timeLeft - 5);
     }
 
@@ -72,7 +69,7 @@ function checkAnswer(i){
         endQuiz();
     }
 }
-
+// timer function
 function startTimer() {
     timerInterval = setInterval(() => {
         timeLeft--;
@@ -84,6 +81,7 @@ function startTimer() {
     }, 1000);
 }
 
+//end quiz function - get initials and save high score to local memory
 function endQuiz() {
     clearInterval(timerInterval);
     document.getElementById("question").textContent = "Quiz Over!";
@@ -95,45 +93,32 @@ function endQuiz() {
     
     const initials = document.getElementById("initials").value;
     const userScore = {initials: initials, score: score};
-    const existingScores = JSON.parse(localStorage.getItem("highScores")) || [];
+    const existingScores = JSON.parse(localStorage.getItem("highScores")) || []; //adds current score to the stored highScores
     existingScores.push(userScore);
         console.log(userScore);
     localStorage.setItem("highScores", JSON.stringify(existingScores));
         console.log(existingScores);
-    displayScores();
+    displayScores(); //calls displayScores function to show top scores
     });
    
 }
 
-    // need to add code to capture initials and write initials + score to local memory 
-    //add view high scores link
-    //add go back button & clear scores buttons
-
-
-
-//div element form in html that's hidden
-//get score unhides the div and accepts user input
-//
 function displayScores(){
 document.getElementById("high-score-initials").style.display = "none";
-// console.log("DISPLAYSCORES");
 const score1 = document.getElementById("score-1");
 const score2 = document.getElementById("score-2");
 const score3 = document.getElementById("score-3");
-const highScores = JSON.parse(localStorage.getItem("highScores")) || [];
-console.log(highScores);
-highScores.sort((a, b) => b.score - a.score);
-const topThreeScores = highScores.slice(0,3);
-
+const highScores = JSON.parse(localStorage.getItem("highScores")) || []; //gets high scores from local storage
+highScores.sort((a, b) => b.score - a.score); //sorts stored high scores
+const topThreeScores = highScores.slice(0,3); //puts highest 3 scores in a variable
+//for loop that returns the top 3 scores and assigns them to the li elements in the HTML
 for (let i=0; i < topThreeScores.length; i++){
 const listItem = document.getElementById(`score-${i + 1}`);
-console.log(listItem);
 listItem.textContent = `${i+1}: ${topThreeScores[i].initials} - ${topThreeScores[i].score}`;
 }
-console.log(topThreeScores);
 document.getElementById("high-score-list").style.display = "block";
 
-playAgain();
+playAgain(); //loads playAgain function
 
 }
 
@@ -141,7 +126,6 @@ function playAgain(){
 const playAgainButton = document.getElementById("play-again");
 playAgainButton.addEventListener("click", function(event){
     event.preventDefault();
-    // resetQuiz();
-   location.reload(); 
+   location.reload(); //reload page to start the quiz again.
 });
 }
